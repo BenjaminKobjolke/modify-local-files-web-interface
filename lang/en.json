@@ -1,0 +1,40 @@
+{
+    "app": {
+        "title": "Local files"
+    },
+    "nav": {
+        "files": "All files",
+        "logout": "Log out"
+    },
+    "files": {
+        "subtitle": "Pick a file to change.",
+        "empty": "No files configured. Add entries under 'files' in config/app.php.",
+        "open": "Open"
+    },
+    "mode": {
+        "edit": "Edit",
+        "append": "Append only"
+    },
+    "edit": {
+        "hint": "Change the content and save. Saving replaces the whole file.",
+        "submit": "Save file"
+    },
+    "append": {
+        "hint": "The current content is hidden. Your text is added at the end of the file.",
+        "submit": "Append text"
+    },
+    "form": {
+        "text_label": "Text"
+    },
+    "flash": {
+        "saved": "Saved.",
+        "appended": "Text appended."
+    },
+    "error": {
+        "invalid_request": "The form was incomplete. Reload the page and try again.",
+        "text_empty": "Enter some text to append.",
+        "text_too_long": "The text is too long (max. 1 MB).",
+        "conflict": "The file changed since you opened it. Your text is kept below; save again to replace the current file.",
+        "file_access": "The file could not be read or written. Check the path in config/app.php and the file permissions."
+    }
+}

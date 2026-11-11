@@ -1,0 +1,6 @@
+# Only assets/ is served from the project root; every other request goes to public/,
+# so config/, var/ (sessions, logs), vendor/ and src/ are never downloadable.
+RewriteEngine On
+RewriteRule ^$ public/ [L]
+RewriteCond %{REQUEST_URI} !/public/
+RewriteRule ^((?!assets/).*)$ public/$1 [L]

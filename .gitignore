@@ -1,0 +1,16 @@
+vendor/
+config/app.php
+var/sessions/*
+var/logs/*
+!var/sessions/.gitkeep
+!var/logs/.gitkeep
+tools/tests_config.bat
+.phpunit.cache/
+.phpunit.result.cache
+.php-cs-fixer.cache
+coding-rules.json
+claude-plans/
+.claude/
+graphify-out/
+src/graphify-out/
+tmp/

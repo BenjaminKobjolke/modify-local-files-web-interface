@@ -1,0 +1,37 @@
+{% extends 'layout.twig' %}
+
+{% set is_edit = file.mode.value == 'edit' %}
+
+{% block title %}{{ file.label }} · {{ t(TK.APP_TITLE) }}{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{{ url_for('files.index') }}">&larr; {{ t(TK.NAV_FILES) }}</a>
+    <h1 class="heading">{{ file.label }} <span class="badge">{{ t(file.mode.labelKey()) }}</span></h1>
+    <p class="subheading">{{ t(is_edit ? TK.EDIT_HINT : TK.APPEND_HINT) }}</p>
+
+    {% if messageKey %}
+        <p class="notice notice--success" role="status">&#10003; {{ t(messageKey) }}</p>
+    {% endif %}
+
+    {% if readFailed %}
+        <p class="notice notice--error" role="alert">&#9888; {{ t(errorKey) }}</p>
+    {% else %}
+        <form class="editor" method="post" action="{{ url_for('files.save', {id: file.id}) }}">
+            <input type="hidden" name="csrf_name" value="{{ csrf.name }}">
+            <input type="hidden" name="csrf_value" value="{{ csrf.value }}">
+            {% if is_edit %}
+                <input type="hidden" name="hash" value="{{ hash }}">
+            {% endif %}
+
+            <label class="editor__label" for="text">{{ t(TK.FORM_TEXT_LABEL) }}</label>
+            <textarea class="editor__text" id="text" name="text" rows="{{ is_edit ? 24 : 8 }}" spellcheck="false"
+                {% if errorKey %}aria-invalid="true" aria-describedby="text-error"{% endif %}>
+{{ text }}</textarea>{# the newline after ">" is dropped by the browser, so a leading newline in the file survives #}
+            {% if errorKey %}
+                <p class="notice notice--error" id="text-error" role="alert">&#9888; {{ t(errorKey) }}</p>
+            {% endif %}
+
+            <button class="button button--primary" type="submit">{{ t(is_edit ? TK.EDIT_SUBMIT : TK.APPEND_SUBMIT) }}</button>
+        </form>
+    {% endif %}
+{% endblock %}

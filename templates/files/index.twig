@@ -1,0 +1,21 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+    <h1 class="heading">{{ t(TK.APP_TITLE) }}</h1>
+    <p class="subheading">{{ t(TK.FILES_SUBTITLE) }}</p>
+
+    {% if files is empty %}
+        <p class="notice">{{ t(TK.FILES_EMPTY) }}</p>
+    {% else %}
+        <ul class="file-list">
+            {% for file in files %}
+                <li class="file-list__item">
+                    <a class="file-list__link" href="{{ url_for('files.show', {id: file.id}) }}">
+                        <span class="file-list__label">{{ file.label }}</span>
+                        <span class="badge">{{ t(file.mode.labelKey()) }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

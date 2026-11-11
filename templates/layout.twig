@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#121212">
+    <title>{% block title %}{{ t(TK.APP_TITLE) }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ base_path() }}/assets/css/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="topbar__title" href="{{ url_for('files.index') }}">{{ t(TK.APP_TITLE) }}</a>
+        <a class="topbar__link" href="?logout">{{ t(TK.NAV_LOGOUT) }}</a>
+    </header>
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

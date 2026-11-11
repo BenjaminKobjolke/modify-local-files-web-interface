@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+// Copy to config/app.php (gitignored) and adjust.
+return [
+    // Shows error details in the browser. Keep false unless debugging locally.
+    'debug' => false,
+    // URL prefix the app is served under ('' when it is the web root). No trailing slash.
+    'base_path' => '/modify-local-files-web-interface',
+    'login_password' => 'change-me',
+    // How long a login stays valid. 10 years = practically "stay logged in".
+    'session_lifetime_seconds' => 315360000,
+    // PSR-3 level name: debug, info, notice, warning, error, ...
+    'log_level' => 'info',
+    // Files the interface may change. Key = id used in the URL ([a-z0-9-]).
+    // mode 'edit'   = show the whole content, saving replaces the file.
+    // mode 'append' = content stays hidden, submitted text is added at the end.
+    'files' => [
+        'blacklist' => [
+            'label' => 'Fritz blacklist',
+            'path' => 'D:\GIT\BenjaminKobjolke\easy-fritz-control\blacklist.txt',
+            'mode' => 'edit',
+        ],
+    ],
+];

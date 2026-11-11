@@ -1,0 +1,11 @@
+/* Themes the php-simple-login page (loaded via SIMPLE_LOGIN_CSS_URL) with the app tokens. */
+@import url("tokens.css");
+
+:root {
+    --bg-primary: var(--color-bg);
+    --bg-card: var(--color-surface);
+    --text-primary: var(--color-text);
+    --text-secondary: var(--color-text-muted);
+    --accent-primary: var(--color-accent);
+    --border-color: var(--color-border);
+}
