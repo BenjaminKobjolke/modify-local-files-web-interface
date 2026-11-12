@@ -5,6 +5,7 @@ var/logs/*
 !var/sessions/.gitkeep
 !var/logs/.gitkeep
 tools/tests_config.bat
+tools/analyze_code_config.bat
 .phpunit.cache/
 .phpunit.result.cache
 .php-cs-fixer.cache
