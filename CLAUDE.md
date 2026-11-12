@@ -34,3 +34,15 @@ they are intentionally referenced, not imported.
 ## graphify
 
 This project's graphify code directory is src/.
+
+## Code Analysis
+
+After a feature or bug fix, run `tools\analyze_changed_and_new_files.bat` from the
+project root. It uses `--only-changed`, includes untracked files, and exits non-zero
+for warnings, errors or analyzer failures. In orchestrated Tickets Watcher runs,
+the watcher owns this check in its analysis phase.
+
+For an explicit whole-project audit or a clean working tree, use
+`tools\analyze_code.bat`. Reports are per-rule CSV files in `code_analysis_results/`;
+a missing CSV means that rule found nothing. Setup and prerequisites are documented
+in the README's Code analysis section.

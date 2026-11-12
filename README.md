@@ -74,6 +74,39 @@ vendor\bin\phpstan analyse
 vendor\bin\php-cs-fixer fix --dry-run
 ```
 
+## Code analysis
+
+Install the cli-code-analyzer checkout's Python environment and its bundled PHP
+Composer dependencies (`php/composer.json`). The analyzer uses PHP on `PATH`.
+Copy `tools/analyze_code_config.example.bat` to `tools/analyze_code_config.bat`
+and set `CLI_ANALYZER_PATH` to that checkout. Keep `LANGUAGE=php`.
+The local config is gitignored; no new project dependency is required.
+
+```bat
+tools\analyze_changed_and_new_files.bat
+tools\analyze_code.bat
+```
+
+Use the changed-files command after changes; it includes untracked PHP files.
+Use the full command for explicit audits or when the working tree is clean.
+Both commands return non-zero for warnings, errors and analyzer failures and write
+per-rule CSV reports to `code_analysis_results/`. No changed files means nothing
+was checked. Tickets Watcher runs the changed-files command as `code_quality`
+alongside the existing unit and integration test commands.
+
+Enabled checks: file length (300-line warning, 500-line error), PHPStan level 5,
+PHP-CS-Fixer PSR-12, PHPMD and function quality metrics. PHPStan loads the existing
+project config and Composer autoloader. PHP-CS-Fixer uses the existing project
+Finder without rewriting its configuration (`managed: false`).
+
+PMD duplicate detection is disabled because PMD is not configured on this machine.
+Install/configure PMD in the analyzer's `settings.ini` (`[pmd] pmd_path`) before
+enabling `pmd_duplicates`. Intelephense and Semgrep are also disabled because their
+optional backends are absent. No graphify analysis is enabled by this setup.
+
+To preview or apply PSR-12 fixes, run `tools\fix_php_issues_dry_run.bat` or
+`tools\fix_php_issues.bat` respectively.
+
 ## Project layout
 
 - `public/index.php` — front controller: config, session, login, Slim app
