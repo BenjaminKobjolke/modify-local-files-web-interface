@@ -1,0 +1,30 @@
+{
+  "log_level": "all",
+  "fail_on": "warning",
+  "global_exclude_paths": ["vendor", "node_modules", ".git", "tickets", "tmp", "code_analysis_results", "graphify-out"],
+  "max_lines_per_file": {
+    "enabled": true,
+    "warning": 300,
+    "error": 500,
+    "exclude_patterns": ["vendor/**", "node_modules/**", ".git/**", "tickets/**", "tmp/**", "code_analysis_results/**", "graphify-out/**"]
+  },
+  "pmd_duplicates": {"enabled": false},
+  "pmd_similar_code": {"enabled": false},
+  "phpstan_analyze": {
+    "enabled": true,
+    "level": 5,
+    "config_file": "phpstan.neon",
+    "bootstrap_files": ["vendor/autoload.php"],
+    "exclude_patterns": ["vendor/**", "node_modules/**", ".git/**", "tickets/**", "tmp/**", "code_analysis_results/**", "graphify-out/**"]
+  },
+  "php_cs_fixer": {
+    "enabled": true,
+    "managed": false,
+    "rules": "@PSR12",
+    "exclude_patterns": ["vendor/**", "node_modules/**", ".git/**", "tickets/**", "tmp/**", "code_analysis_results/**", "graphify-out/**"]
+  },
+  "phpmd_analyze": {"enabled": true},
+  "php_function_quality": {"enabled": true},
+  "intelephense_analyze": {"enabled": false},
+  "semgrep_analyze": {"enabled": false}
+}
