@@ -14,3 +14,10 @@ claude-plans/
 graphify-out/
 src/graphify-out/
 tmp/
+tickets/
+HANDOFF.md
+PLAN.md
+PLAN_*.md
+tmp/commit_msg.tmp
+code_analysis_results/
+.reasonix/
