@@ -9,8 +9,10 @@ if not exist "%~dp0tests_config.bat" (
 )
 call "%~dp0tests_config.bat"
 set "XDEBUG_MODE=off"
+set "PHPUNIT_WATCHER_LIMITS="
+if "%TICKETS_WATCHER_COMMAND_RUN%"=="1" set "PHPUNIT_WATCHER_LIMITS=--enforce-time-limit --default-time-limit 120 --timeout 500"
 pushd "%~dp0.."
-"%PHP_EXE%" vendor\phpunit\phpunit\phpunit --debug --colors=always %*
+"%PHP_EXE%" vendor\phpunit\phpunit\phpunit --debug --colors=always %PHPUNIT_WATCHER_LIMITS% %*
 set "TESTRESULT=%ERRORLEVEL%"
 popd
 endlocal & exit /b %TESTRESULT%
