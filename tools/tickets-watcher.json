@@ -42,7 +42,7 @@
       "test": "green"
     },
     "tools\\run_integration_tests.bat": {
-      "test": "green"
+      "test": "cut_off"
     },
     "tools\\analyze_changed_and_new_files.bat": {
       "code_quality": "green"
