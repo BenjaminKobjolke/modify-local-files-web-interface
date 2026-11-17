@@ -37,6 +37,15 @@ final class FileSavePayloadTest extends TestCase
         $this->assertSame(TK::ERROR_INVALID_REQUEST, $payload->errorKey);
     }
 
+    public function testEditWithNonStringHashIsInvalid(): void
+    {
+        $payload = FileSavePayload::fromPostArray(['text' => 'a', 'hash' => ['x']], FileMode::Edit);
+
+        self::assertFalse($payload->isValid());
+        self::assertSame(TK::ERROR_INVALID_REQUEST, $payload->errorKey);
+        self::assertSame('', $payload->expectedHash);
+    }
+
     public function testMissingTextIsInvalid(): void
     {
         $payload = FileSavePayload::fromPostArray(['hash' => self::HASH], FileMode::Edit);

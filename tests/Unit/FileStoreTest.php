@@ -33,6 +33,37 @@ final class FileStoreTest extends TestCase
         return new ManagedFile('test', 'Test', $this->dir->file('test.txt', $content), $mode);
     }
 
+    public function testSaveOverwritesEditFileWhenHashMatches(): void
+    {
+        $file = $this->managed("old\n");
+
+        $this->store->save($file, "new\n", sha1("old\n"));
+
+        self::assertSame("new\n", file_get_contents($file->path));
+    }
+
+    public function testSaveRefusesEditFileWithStaleHash(): void
+    {
+        $file = $this->managed("old\n");
+
+        try {
+            $this->store->save($file, "new\n", str_repeat('0', 40));
+            self::fail('Expected FileConflictException');
+        } catch (FileConflictException $e) {
+            self::assertSame(sha1("old\n"), $e->currentHash);
+        }
+        self::assertSame("old\n", file_get_contents($file->path));
+    }
+
+    public function testSaveAppendsToAppendFileIgnoringHash(): void
+    {
+        $file = $this->managed("a\n", FileMode::Append);
+
+        $this->store->save($file, 'b', '');
+
+        self::assertSame("a\nb\n", file_get_contents($file->path));
+    }
+
     public function testReadReturnsContent(): void
     {
         $this->assertSame("a\nb\n", $this->store->read($this->managed("a\nb\n")));
