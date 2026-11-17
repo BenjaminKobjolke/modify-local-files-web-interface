@@ -27,6 +27,22 @@ final class BatchCommandsTest extends TestCase
         }
 
         $root = sys_get_temp_dir() . '/batch commands ' . bin2hex(random_bytes(6));
+        $files = $this->createFixture($root, $failedStage);
+
+        try {
+            $status = $this->runWithDeadline($files[3], $files[4], $root);
+            self::assertFalse($status['running'], 'Batch command exceeded 10 seconds.');
+            $output = (string) file_get_contents($files[4]);
+            self::assertSame($expected, $status['exitcode'], $output);
+            $this->assertStages($failedStage, $output);
+        } finally {
+            $this->removeFixture($root, $files);
+        }
+    }
+
+    /** @return list<string> */
+    private function createFixture(string $root, string $failedStage): array
+    {
         mkdir($root . '/tools', 0777, true);
         mkdir($root . '/graphify-out');
         $files = [
@@ -41,48 +57,58 @@ final class BatchCommandsTest extends TestCase
         file_put_contents($files[2], '{}');
         file_put_contents($files[3], "@echo off\r\nset \"PATH=$root;%PATH%\"\r\ncall \"{$files[0]}\"\r\nexit /b %ERRORLEVEL%\r\n");
 
-        try {
-            $process = proc_open(
-                ['cmd.exe', '/d', '/c', $files[3]],
-                [0 => ['pipe', 'r'], 1 => ['file', $files[4], 'w'], 2 => ['file', $files[4], 'a']],
-                $pipes,
-                $root,
-            );
-            self::assertIsResource($process);
-            fclose($pipes[0]);
-            $deadline = microtime(true) + 10;
-            do {
-                $status = proc_get_status($process);
-                if (!$status['running']) {
-                    break;
-                }
-                usleep(10000);
-            } while (microtime(true) < $deadline);
+        return $files;
+    }
 
-            if ($status['running']) {
-                proc_terminate($process);
+    /** @return array{running: bool, exitcode: int} */
+    private function runWithDeadline(string $script, string $outputFile, string $cwd): array
+    {
+        $process = proc_open(
+            ['cmd.exe', '/d', '/c', $script],
+            [0 => ['pipe', 'r'], 1 => ['file', $outputFile, 'w'], 2 => ['file', $outputFile, 'a']],
+            $pipes,
+            $cwd,
+        );
+        self::assertIsResource($process);
+        fclose($pipes[0]);
+        $deadline = microtime(true) + 10;
+        do {
+            $status = proc_get_status($process);
+            if (!$status['running']) {
+                break;
             }
-            proc_close($process);
-            self::assertFalse($status['running'], 'Batch command exceeded 10 seconds.');
-            $output = (string) file_get_contents($files[4]);
-            self::assertSame($expected, $status['exitcode'], $output);
-            self::assertStringContainsString('STAGE:update', $output);
-            if ($failedStage === 'update') {
-                self::assertStringNotContainsString('STAGE:god-nodes', $output);
-            } elseif ($failedStage === 'god-nodes') {
-                self::assertStringNotContainsString('STAGE:query', $output);
-            } else {
-                self::assertStringContainsString('STAGE:query', $output);
-            }
-        } finally {
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-            rmdir($root . '/tools');
-            rmdir($root . '/graphify-out');
-            rmdir($root);
+            usleep(10000);
+        } while (microtime(true) < $deadline);
+
+        if ($status['running']) {
+            proc_terminate($process);
         }
+        proc_close($process);
+        return ['running' => $status['running'], 'exitcode' => $status['exitcode']];
+    }
+
+    private function assertStages(string $failedStage, string $output): void
+    {
+        self::assertStringContainsString('STAGE:update', $output);
+        if ($failedStage === 'update') {
+            self::assertStringNotContainsString('STAGE:god-nodes', $output);
+        } elseif ($failedStage === 'god-nodes') {
+            self::assertStringNotContainsString('STAGE:query', $output);
+        } else {
+            self::assertStringContainsString('STAGE:query', $output);
+        }
+    }
+
+    /** @param list<string> $files */
+    private function removeFixture(string $root, array $files): void
+    {
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+        rmdir($root . '/tools');
+        rmdir($root . '/graphify-out');
+        rmdir($root);
     }
 }
