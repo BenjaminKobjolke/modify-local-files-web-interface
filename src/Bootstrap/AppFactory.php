@@ -26,7 +26,7 @@ final class AppFactory
 {
     /**
      * @param \ArrayIterator<string, string> $csrfStorage CSRF tokens; kept in the session in production
-     * @return App<ContainerInterface|null>
+     * @return App<covariant ContainerInterface|null>
      */
     public static function create(
         AppConfig $config,

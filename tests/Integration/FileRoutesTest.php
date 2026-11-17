@@ -26,7 +26,7 @@ final class FileRoutesTest extends TestCase
     private TempDir $dir;
     private string $editPath;
     private string $appendPath;
-    /** @var App<ContainerInterface|null> */
+    /** @var App<covariant ContainerInterface|null> */
     private App $app;
 
     protected function setUp(): void
