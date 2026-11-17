@@ -24,8 +24,8 @@ final readonly class FileSavePayload
 
     public static function fromPostArray(mixed $body, FileMode $mode): self
     {
-        $text = is_array($body) && is_string($body['text'] ?? null) ? $body['text'] : null;
-        $hash = is_array($body) && is_string($body['hash'] ?? null) ? $body['hash'] : '';
+        $text = self::stringField($body, 'text');
+        $hash = self::stringField($body, 'hash') ?? '';
 
         if ($text === null) {
             return new self('', '', TK::ERROR_INVALID_REQUEST);
@@ -33,14 +33,22 @@ final readonly class FileSavePayload
         // Browser textareas submit CRLF; the files are kept with LF line endings.
         $text = str_replace("\r\n", "\n", $text);
 
-        $errorKey = match (true) {
+        return new self($text, $mode === FileMode::Edit ? $hash : '', self::errorKeyFor($text, $hash, $mode));
+    }
+
+    private static function stringField(mixed $body, string $key): ?string
+    {
+        return is_array($body) && is_string($body[$key] ?? null) ? $body[$key] : null;
+    }
+
+    private static function errorKeyFor(string $text, string $hash, FileMode $mode): ?string
+    {
+        return match (true) {
             strlen($text) > self::MAX_TEXT_BYTES => TK::ERROR_TEXT_TOO_LONG,
             $mode === FileMode::Append && trim($text) === '' => TK::ERROR_TEXT_EMPTY,
             $mode === FileMode::Edit && preg_match(self::HASH_PATTERN, $hash) !== 1 => TK::ERROR_INVALID_REQUEST,
             default => null,
         };
-
-        return new self($text, $mode === FileMode::Edit ? $hash : '', $errorKey);
     }
 
     public function isValid(): bool

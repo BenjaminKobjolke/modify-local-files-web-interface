@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Config\AppConfig;
-use App\Config\FileMode;
 use App\Config\ManagedFile;
 use App\Config\TranslationKeys as TK;
 use App\Files\FileAccessException;
@@ -61,11 +60,7 @@ final class FileController
         }
 
         try {
-            if ($file->mode === FileMode::Edit) {
-                $this->store->overwrite($file, $payload->text, $payload->expectedHash);
-            } else {
-                $this->store->append($file, $payload->text);
-            }
+            $this->store->save($file, $payload->text, $payload->expectedHash);
         } catch (FileConflictException $e) {
             $this->logger->warning('Save refused, file changed on disk', ['file' => $file->id]);
             return $this->renderForm($request, $response->withStatus(409), $file, [
@@ -105,7 +100,7 @@ final class FileController
      */
     private function renderForm(Request $request, Response $response, ManagedFile $file, array $vars): Response
     {
-        if ($file->mode === FileMode::Edit && !array_key_exists('text', $vars)) {
+        if ($file->mode->showsContent() && !array_key_exists('text', $vars)) {
             try {
                 $content = $this->store->read($file);
                 $vars += ['text' => $content, 'hash' => $this->store->hash($content)];

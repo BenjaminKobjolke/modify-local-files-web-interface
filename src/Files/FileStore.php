@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Files;
 
+use App\Config\FileMode;
 use App\Config\ManagedFile;
 
 /**
@@ -23,6 +24,18 @@ final class FileStore
     public function hash(string $content): string
     {
         return sha1($content);
+    }
+
+    /**
+     * Write the submitted text the way the file's mode allows: replace it in edit mode,
+     * add it at the end in append mode. The hash is only checked in edit mode.
+     */
+    public function save(ManagedFile $file, string $text, string $expectedHash): void
+    {
+        match ($file->mode) {
+            FileMode::Edit => $this->overwrite($file, $text, $expectedHash),
+            FileMode::Append => $this->append($file, $text),
+        };
     }
 
     /**

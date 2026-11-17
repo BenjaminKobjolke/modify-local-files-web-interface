@@ -22,6 +22,14 @@ enum FileMode: string
         };
     }
 
+    public function showsContent(): bool
+    {
+        return match ($this) {
+            self::Edit => true,
+            self::Append => false,
+        };
+    }
+
     public function savedMessageKey(): string
     {
         return match ($this) {
